@@ -23,6 +23,7 @@ def authenticate():
 
     f = Fernet(key)
     try:
+        # Change codec to your encoded password given by set new password
         codec = b'gAAAAABfwYnXxLDLOCqLgHeKm8g2BDayAMvvXejUdQ7bx2rg76v_nFq2Xrx6oqtSbkMEp9H_wQfY7GYzXy9TGoWAzknawUe6zQ=='
         decrypted = f.decrypt(codec)
     except InvalidToken as e:
