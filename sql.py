@@ -1,8 +1,21 @@
 import sqlite3
 from cryptography.fernet import Fernet, InvalidToken
 import subprocess
-conn = sqlite3.connect('store.db')
-c = conn.cursor()
+import os
+if not os.path.exists('store.db'):
+    print('[PasswordManager] Intializing ...')
+    try:
+        os.system('sqlite3 store.db')
+    except:
+        print('[Error] Please install sqlite3')
+        exit()
+    conn = sqlite3.connect('store.db')
+    c = conn.cursor()
+    c.execute(
+        'CREATE TABLE DB (id INTEGER, username TEXT, password TEXT, url TEXT);')
+else:
+    conn = sqlite3.connect('store.db')
+    c = conn.cursor()
 
 
 def reset_table():
@@ -63,7 +76,7 @@ def copy_password(id_, key):
         passw = c.fetchone()
         passw = f.decrypt(passw[2].encode()).decode("utf-8")
         print(f"[PasswordManager] password >> {passw}")
-        import subprocess 
+        import subprocess
         # subprocess.run("pbcopy", universal_newlines=True, input=passw)
         print('[PasswordManager] Password copied to clipboard [Not Working :( ]')
     except:

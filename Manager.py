@@ -9,7 +9,7 @@ def run():
     if key == None:
         exit()
     os.system('clear')
-    print('[PasswordManager] Login successfulQ')
+    print('[PasswordManager] Login successful')
     opt = None
     while opt != 'Q':
         opt = input('''
@@ -50,5 +50,10 @@ Select an action: ''')
 
 
 if __name__ == '__main__':
+    if not os.path.exists('store.db'):
+        try:
+            os.system('sqlite3 store.db')
+        except:
+            print('[Error] Please install sqlite3')
     os.system('clear')
     run()
