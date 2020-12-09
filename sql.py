@@ -1,7 +1,6 @@
 import sqlite3
 from cryptography.fernet import Fernet, InvalidToken
 import subprocess
-# import pyperclip
 conn = sqlite3.connect('store.db')
 c = conn.cursor()
 
@@ -27,26 +26,26 @@ def fetch_all(key):
     f = Fernet(key)
     print("|%4s|%30s|%30s|%30s|" % ('id', 'username', 'password', 'url'))
     print('-'*99)
-    for row in c.execute("SELECT * FROM DB ORDER BY username"):
+    for row in c.execute("SELECT * FROM DB ORDER BY id"):
         print("|%4s|%30s|%30s|%30s|" %
               (row[0], row[1], f.decrypt(row[2].encode()).decode("utf-8"), row[3]))
     print('-'*99)
-    # sel = input('[PasswordManager] Enter id to copy to clipboard: ')
-    # copy_password(sel, key)
+    sel = input('[PasswordManager] Enter id to copy to clipboard: ')
+    copy_password(sel, key)
 
 
 def fetch_one(url, key):
     f = Fernet(key)
     t = (url,)
-    c.execute('SELECT * FROM DB WHERE url=?', t)
+    c.execute('SELECT * FROM DB WHERE url=? ORDER BY id', t)
     print("|%4s|%30s|%30s|%30s|" % ('id', 'username', 'password', 'url'))
     print('-'*99)
     for row in c.fetchall():
         print("|%4s|%30s|%30s|%30s|" %
               (row[0], row[1], f.decrypt(row[2].encode()).decode('utf-8'), row[3]))
     print('-'*99)
-    # sel = input('[PasswordManager] Enter id to copy to clipboard: ')
-    # copy_password(sel, key)
+    sel = input('[PasswordManager] Enter id to copy to clipboard: ')
+    copy_password(sel, key)
 
 
 def delete(id_):
@@ -64,7 +63,8 @@ def copy_password(id_, key):
         passw = c.fetchone()
         passw = f.decrypt(passw[2].encode()).decode("utf-8")
         print(f"[PasswordManager] password >> {passw}")
-        # pyperclip.copy(passw)
+        import subprocess 
+        # subprocess.run("pbcopy", universal_newlines=True, input=passw)
         print('[PasswordManager] Password copied to clipboard [Not Working :( ]')
     except:
         print('[PasswordManager] ID not found')
