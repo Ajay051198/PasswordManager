@@ -20,7 +20,7 @@ def run():
 Q: Exit 
 
 Select an action: ''')
-        print('-'*99)
+        print('-'*68)
 
         if opt == '1':
             username = input('[PasswordManager] Enter the username: ')
@@ -46,6 +46,7 @@ Select an action: ''')
 
     save_and_close()
     os.system('clear')
+    os.system('cd ~')
     print('[PasswordManager] Exiting ...')
 
 

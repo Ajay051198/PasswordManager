@@ -1,6 +1,5 @@
 import sqlite3
 from cryptography.fernet import Fernet, InvalidToken
-import subprocess
 import os
 if not os.path.exists('store.db'):
     print('[PasswordManager] Intializing ...')
@@ -36,27 +35,25 @@ def insert(username, password, url, key):
 
 
 def fetch_all(key):
-    f = Fernet(key)
-    print("|%4s|%30s|%30s|%30s|" % ('id', 'username', 'password', 'url'))
-    print('-'*99)
-    for row in c.execute("SELECT * FROM DB ORDER BY id"):
-        print("|%4s|%30s|%30s|%30s|" %
-              (row[0], row[1], f.decrypt(row[2].encode()).decode("utf-8"), row[3]))
-    print('-'*99)
+    print("|%4s|%30s|%30s|" % ('id', 'username', 'url'))
+    print('-'*68)
+    for row in c.execute("SELECT id, username, url FROM DB ORDER BY id"):
+        print("|%4s|%30s|%30s|" %
+              (row[0], row[1], row[2]))
+    print('-'*68)
     sel = input('[PasswordManager] Enter id to copy to clipboard: ')
     copy_password(sel, key)
 
 
 def fetch_one(url, key):
-    f = Fernet(key)
     t = (url,)
-    c.execute('SELECT * FROM DB WHERE url=? ORDER BY id', t)
-    print("|%4s|%30s|%30s|%30s|" % ('id', 'username', 'password', 'url'))
-    print('-'*99)
+    c.execute('SELECT id, username, url FROM DB WHERE url=? ORDER BY id', t)
+    print("|%4s|%30s|%30s|" % ('id', 'username', 'url'))
+    print('-'*68)
     for row in c.fetchall():
-        print("|%4s|%30s|%30s|%30s|" %
-              (row[0], row[1], f.decrypt(row[2].encode()).decode('utf-8'), row[3]))
-    print('-'*99)
+        print("|%4s|%30s|%30s|" %
+              (row[0], row[1], row[2]))
+    print('-'*68)
     sel = input('[PasswordManager] Enter id to copy to clipboard: ')
     copy_password(sel, key)
 
@@ -75,10 +72,9 @@ def copy_password(id_, key):
         c.execute('SELECT * FROM DB WHERE ID=?', id_)
         passw = c.fetchone()
         passw = f.decrypt(passw[2].encode()).decode("utf-8")
-        print(f"[PasswordManager] password >> {passw}")
         import subprocess
-        # subprocess.run("pbcopy", universal_newlines=True, input=passw)
-        print('[PasswordManager] Password copied to clipboard [Not Working :( ]')
+        subprocess.run("pbcopy", universal_newlines=True, input=passw)
+        print('[PasswordManager] Password copied to clipboard')
     except:
         print('[PasswordManager] ID not found')
 
