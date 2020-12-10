@@ -70,11 +70,15 @@ def copy_password(id_, key):
     f = Fernet(key)
     try:
         c.execute('SELECT * FROM DB WHERE ID=?', id_)
-        passw = c.fetchone()
-        passw = f.decrypt(passw[2].encode()).decode("utf-8")
-        import subprocess
-        subprocess.run("pbcopy", universal_newlines=True, input=passw)
-        print('[PasswordManager] Password copied to clipboard')
+        ro = c.fetchone()
+        passw = f.decrypt(ro[2].encode()).decode("utf-8")
+        choice = int(input('[PasswordManager] Press 1 to show and 2 to copy to clipboard'))
+        if choice == 1:
+            print(f"[PasswordManager] The password for {ro[3]} is {passw}")
+        else:
+            import subprocess
+            subprocess.run("pbcopy", universal_newlines=True, input=passw)
+            print('[PasswordManager] Password copied to clipboard')
     except:
         print('[PasswordManager] ID not found')
 
