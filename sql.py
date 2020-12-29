@@ -41,7 +41,7 @@ def fetch_all(key):
         print("|%4s|%30s|%30s|" %
               (row[0], row[1], row[2]))
     print('-'*68)
-    sel = input('[PasswordManager] Enter id to copy to clipboard: ')
+    sel = input('[PasswordManager] Enter id to select: ')
     copy_password(sel, key)
 
 
@@ -54,13 +54,13 @@ def fetch_one(url, key):
         print("|%4s|%30s|%30s|" %
               (row[0], row[1], row[2]))
     print('-'*68)
-    sel = input('[PasswordManager] Enter id to copy to clipboard: ')
+    sel = input('[PasswordManager] Enter id to select: ')
     copy_password(sel, key)
 
 
 def delete(id_):
     try:
-        c.execute('DELETE FROM DB WHERE ID=?', id_)
+        c.execute('DELETE FROM DB WHERE ID=?', (id_,))
         print(f"[PasswordManager] Removed successfully")
     except:
         print('[PasswordManager] ID not found')
@@ -69,10 +69,10 @@ def delete(id_):
 def copy_password(id_, key):
     f = Fernet(key)
     try:
-        c.execute('SELECT * FROM DB WHERE ID=?', id_)
+        c.execute('SELECT * FROM DB WHERE ID=?', (id_,))
         ro = c.fetchone()
         passw = f.decrypt(ro[2].encode()).decode("utf-8")
-        choice = int(input('[PasswordManager] Press 1 to show and 2 to copy to clipboard'))
+        choice = int(input('[PasswordManager] Press 1 to show and 2 to copy to clipboard: '))
         if choice == 1:
             print(f"[PasswordManager] The password for {ro[3]} is {passw}")
         else:
